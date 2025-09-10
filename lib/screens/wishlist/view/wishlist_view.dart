@@ -3,6 +3,7 @@ import 'package:cinephile/screens/wishlist/bind/wishlist_bind.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_utils/flutter_custom_utils.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class WishlistView extends StatelessWidget {
@@ -63,12 +64,13 @@ class WishlistView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      title: const Text(
+      title:  Text(
         'Wishlist',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+        style: GoogleFonts.italiana(
+          textStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,fontWeight: FontWeight.bold
+          ),
         ),
       ),
       leading: IconButton(
@@ -124,13 +126,14 @@ class MovieWishlistCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  style: GoogleFonts.italiana(
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     const Icon(Icons.star, color: Colors.yellow, size: 16),
@@ -152,7 +155,7 @@ class MovieWishlistCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     const Icon(Icons.calendar_today, color: Colors.white, size: 16),
@@ -165,7 +168,7 @@ class MovieWishlistCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     const Icon(Icons.language_outlined, color: Colors.white, size: 16),

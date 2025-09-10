@@ -81,13 +81,13 @@ class IntroView extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     side: BorderSide.none,
                   ),
-                  child: const Text(
+                  child:  Text(
                     'Next',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: GoogleFonts.italiana(
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,fontWeight: FontWeight.bold
+                      ),),
                   ),
                 ),
               ),

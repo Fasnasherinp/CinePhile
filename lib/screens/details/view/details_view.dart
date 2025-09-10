@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_utils/flutter_custom_utils.dart';
 import 'package:get/get.dart';
 import 'package:cinephile/screens/details/bind/details_bind.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key});
@@ -72,12 +73,13 @@ class DetailsView extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text(
+                             Text(
                               ' Eternals ',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                              style: GoogleFonts.italiana(
+                                textStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,fontWeight: FontWeight.bold
+                                ),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -239,9 +241,12 @@ class DetailsView extends StatelessWidget {
         children: [
           Text(
             'Overview',
-            style: TextStyle(
+            style: GoogleFonts.italiana(
+              textStyle: const TextStyle(
                 color: Colors.white,
-                fontSize: 18,fontWeight: FontWeight.bold
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ).cPadOnly(t:16),
           const Text(
@@ -261,13 +266,13 @@ class DetailsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Casts',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: GoogleFonts.italiana(
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,fontWeight: FontWeight.bold
+            ),),
         ).cPadOnly(l: 16,t:16,b: 5),
         GridView.builder(
           shrinkWrap: true,

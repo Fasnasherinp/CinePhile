@@ -297,10 +297,12 @@ class HomeView extends StatelessWidget {
                       right: 15,
                       child: Text(
                         movieData.originalTitle ?? 'No Title',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        style: GoogleFonts.italiana(
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -375,10 +377,12 @@ class MovieGridItem extends StatelessWidget {
               child: Text(
                 movieTitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.italiana(
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
