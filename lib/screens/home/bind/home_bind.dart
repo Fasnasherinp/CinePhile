@@ -12,12 +12,18 @@ class HomeBind implements Bindings {
 class HomeController extends GetxController {
   static HomeController get to => Get.find();
 
+  final RxList<bool> isWishlisted = List.generate(26, (index) => false).obs;
+
   @override
   void onInit() {
     super.onInit();
     // Fetch data here when the controller is initialized
     // fetchNewMovies();
     // fetchUpcomingMovies();
+  }
+  void toggleWishlist(int index) {
+    isWishlisted[index] = !isWishlisted[index];
+    update();
   }
 
 }

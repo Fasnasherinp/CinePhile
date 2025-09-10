@@ -219,7 +219,7 @@ class DetailsView extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Get.toNamed(Routes.wishlist);
+
                       },
                       child: const Icon(Icons.favorite_border_outlined, color: Colors.white)),
                 ),
@@ -268,7 +268,7 @@ class DetailsView extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-        ).cPadOnly(l: 16,t:16),
+        ).cPadOnly(l: 16,t:16,b: 5),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

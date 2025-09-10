@@ -20,8 +20,8 @@ class HomeView extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.topRight,
                 colors: [
-                  Color(0xFF0B5A3D),
                   Color(0xFF3A0442),
+                  Color(0xFF0B5A3D),
                 ],
               ),
             ),
@@ -169,9 +169,10 @@ class HomeView extends StatelessWidget {
                 childAspectRatio: 0.7,
               ),
               itemBuilder: (context, index) {
-                return const MovieGridItem(
+                return MovieGridItem(
                   imagePath: movie,
                   movieTitle: 'Movie Title',
+                  index: index,
                 );
               },
             ),
@@ -183,18 +184,23 @@ class HomeView extends StatelessWidget {
 }
 
 
+
 class MovieGridItem extends StatelessWidget {
   final String imagePath;
   final String movieTitle;
+  final int index;
 
   const MovieGridItem({
     super.key,
     required this.imagePath,
     required this.movieTitle,
+    required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find();
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Stack(
@@ -218,11 +224,28 @@ class MovieGridItem extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () {
+                homeController.toggleWishlist(index);
+              },
+              child: GetBuilder<HomeController>(
+                builder: (controller) {
+                  return Icon(
+                    controller.isWishlisted[index] ? Icons.favorite : Icons.favorite_border,
+                    color: controller.isWishlisted[index] ? Colors.red : Colors.white,
+                  );
+                },
               ),
             ),
           ),
@@ -231,7 +254,6 @@ class MovieGridItem extends StatelessWidget {
     );
   }
 }
-
 class MoviePoster extends StatelessWidget {
   final String imagePath;
 
