@@ -1,35 +1,41 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cinephile/res/images.dart';
 import 'package:cinephile/screens/home/bind/home_bind.dart';
+import 'package:cinephile/utilities/app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomeView extends GetView<HomeController> {
+
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.topRight,
-            colors: [
-              Color(0xFF0B5A3D),
-              Color(0xFF3A0442),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              _buildScrollableContent(),
-            ],
-          ),
-        ),
+      body: GetBuilder<HomeController>(
+        builder: (logic) {
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.topRight,
+                colors: [
+                  Color(0xFF0B5A3D),
+                  Color(0xFF3A0442),
+                ],
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  _buildScrollableContent(),
+                ],
+              ),
+            ),
+          );
+        }
       ),
     );
   }
@@ -60,7 +66,7 @@ class HomeView extends GetView<HomeController> {
                 child: IconButton(
                   icon: const Icon(Icons.favorite_border, color: Colors.white, size: 30),
                   onPressed: () {
-                    // Handle wishlist button press
+                    Get.toNamed(Routes.wishlist);
                   },
                 ),
               ),
@@ -150,8 +156,8 @@ class HomeView extends GetView<HomeController> {
           const SizedBox(height: 10),
           InkWell(
             onTap: (){
-              Get.toNamed('/details');
-              },
+              Get.toNamed(Routes.details);
+            },
             child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -174,8 +180,8 @@ class HomeView extends GetView<HomeController> {
       ),
     );
   }
-
 }
+
 
 class MovieGridItem extends StatelessWidget {
   final String imagePath;

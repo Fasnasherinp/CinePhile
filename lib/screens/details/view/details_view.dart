@@ -1,138 +1,143 @@
 import 'package:cinephile/res/images.dart';
+import 'package:cinephile/utilities/app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_utils/flutter_custom_utils.dart';
 import 'package:get/get.dart';
 import 'package:cinephile/screens/details/bind/details_bind.dart';
 
-class DetailsView extends GetView<DetailsController> {
+class DetailsView extends StatelessWidget {
   const DetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0B5A3D),
-              Color(0xFF1B0320),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // The main movie header and info stack
-              Stack(
-                children: [
-                  SizedBox(
-                    height: Get.height * 0.46,
-                    width: Get.width,
-                    child: Image.asset(
-                      movie,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  _buildHeaderIcons(),
+      body: GetBuilder<DetailsController>(
+        builder: (logic) {
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF0B5A3D),
+                  Color(0xFF1B0320),
                 ],
               ),
-
-              // This is the container with the movie info that will overlap the image
-              Transform.translate(
-                offset: const Offset(0, -60), // Adjust this value to control overlap
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    width: Get.width,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          Color(0xFF0B5A3D),
-                          Color(0xFF3A0442),
-                        ],
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // The main movie header and info stack
+                  Stack(
+                    children: [
+                      SizedBox(
+                        height: Get.height * 0.46,
+                        width: Get.width,
+                        child: Image.asset(
+                          movie,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.10),
-                          blurRadius: 15,
-                          offset: const Offset(2, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          ' Eternals ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      _buildHeaderIcons(),
+                    ],
+                  ),
+
+                  // This is the container with the movie info that will overlap the image
+                  Transform.translate(
+                    offset: const Offset(0, -60), // Adjust this value to control overlap
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        width: Get.width,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.topRight,
+                            colors: [
+                              Color(0xFF0B5A3D),
+                              Color(0xFF3A0442),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              '2025-05-22 ',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(width: 10,),
-                            Text(
-                              'Popularity : 60',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                              textAlign: TextAlign.center,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.10),
+                              blurRadius: 15,
+                              offset: const Offset(2, 5),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            5,
-                                (index) => Icon(
-                              index < 4 ? Icons.star : Icons.star_border,
-                              color: Colors.white,
-                              size: 20,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              ' Eternals ',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                          ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  '2025-05-22 ',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(width: 10,),
+                                Text(
+                                  'Popularity : 60',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                5,
+                                    (index) => Icon(
+                                  index < 4 ? Icons.star : Icons.star_border,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
+                    ),
+                  ),
+
+                  // The description and cast sections now follow directly after the info container
+                  // with a negative top margin to close the gap created by the transform
+                  Transform.translate(
+                    offset: const Offset(0, -50), // Adjust this to close the gap
+                    child: Column(
+                      children: [
+                        _buildDescriptionSection(),
+                        _buildCastSection(),
                       ],
                     ),
                   ),
-                ),
+                ],
               ),
-
-              // The description and cast sections now follow directly after the info container
-              // with a negative top margin to close the gap created by the transform
-              Transform.translate(
-                offset: const Offset(0, -50), // Adjust this to close the gap
-                child: Column(
-                  children: [
-                    _buildDescriptionSection(),
-                    _buildCastSection(),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }
@@ -175,7 +180,10 @@ class DetailsView extends GetView<DetailsController> {
                   ),
                   child: GestureDetector(
                     onTap: () => Get.back(),
-                    child: Center(child: const Icon(Icons.arrow_back_ios, color: Colors.white)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
@@ -209,7 +217,11 @@ class DetailsView extends GetView<DetailsController> {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.favorite_border_outlined, color: Colors.white),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.toNamed(Routes.wishlist);
+                      },
+                      child: const Icon(Icons.favorite_border_outlined, color: Colors.white)),
                 ),
               ),
             ),
@@ -228,8 +240,8 @@ class DetailsView extends GetView<DetailsController> {
           Text(
             'Overview',
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,fontWeight: FontWeight.bold
+                color: Colors.white,
+                fontSize: 18,fontWeight: FontWeight.bold
             ),
           ).cPadOnly(t:16),
           const Text(

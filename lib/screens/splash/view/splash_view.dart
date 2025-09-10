@@ -1,8 +1,7 @@
 import 'package:cinephile/res/images.dart';
+import 'package:cinephile/utilities/app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-
 
 
 class SplashView extends StatelessWidget {
@@ -81,7 +80,7 @@ class SplashView extends StatelessWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () {
-                    Get.toNamed('/home');
+                    Get.toNamed(Routes.home);
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -89,7 +88,7 @@ class SplashView extends StatelessWidget {
                     side: BorderSide.none,
                   ),
                   child: const Text(
-                    'Enter Now',
+                    'Next',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
