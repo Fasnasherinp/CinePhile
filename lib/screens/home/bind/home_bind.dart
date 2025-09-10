@@ -15,10 +15,9 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    3.cSeconds.cDelay(() {
-      // Get.toNamed(Routes.scanningPage);
-      Get.offAllNamed(Routes.home);
-      // Get.until((route) => route.settings.name == Routes.scanningPage);
-    });
+    // Fetch data here when the controller is initialized
+    // fetchNewMovies();
+    // fetchUpcomingMovies();
   }
+
 }

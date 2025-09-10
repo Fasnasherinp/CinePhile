@@ -1,4 +1,6 @@
 
+import 'package:cinephile/screens/details/bind/details_bind.dart';
+import 'package:cinephile/screens/details/view/details_view.dart';
 import 'package:cinephile/screens/home/bind/home_bind.dart';
 import 'package:cinephile/screens/home/view/home_view.dart';
 import 'package:cinephile/screens/splash/bind/splash_bind.dart';
@@ -17,6 +19,11 @@ abstract class AppPages {
       name: Routes.home,
       page: () => const HomeView(),
       binding: HomeBind(),
+    ),
+    GetPage(
+      name: Routes.details,
+      page: () => const DetailsView(),
+      binding: DetailsBind(),
     ),
   ];
 }
