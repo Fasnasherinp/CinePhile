@@ -1,10 +1,9 @@
+import 'package:cinephile/model/movies_model.dart';
 import 'package:cinephile/res/images.dart';
-import 'package:cinephile/utilities/app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_utils/flutter_custom_utils.dart';
 import 'package:get/get.dart';
 import 'package:cinephile/screens/details/bind/details_bind.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key});
@@ -13,138 +12,185 @@ class DetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GetBuilder<DetailsController>(
-        builder: (logic) {
-          return Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF0B5A3D),
-                  Color(0xFF1B0320),
-                ],
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // The main movie header and info stack
-                  Stack(
-                    children: [
-                      SizedBox(
-                        height: Get.height * 0.46,
-                        width: Get.width,
-                        child: Image.asset(
-                          movie,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      _buildHeaderIcons(),
+          builder: (logic) {
+            // Check if we have movie data
+            if (logic.movieData == null) {
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF0B5A3D),
+                      Color(0xFF1B0320),
                     ],
                   ),
-
-                  // This is the container with the movie info that will overlap the image
-                  Transform.translate(
-                    offset: const Offset(0, -60), // Adjust this value to control overlap
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        width: Get.width,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.topRight,
-                            colors: [
-                              Color(0xFF0B5A3D),
-                              Color(0xFF3A0442),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.10),
-                              blurRadius: 15,
-                              offset: const Offset(2, 5),
-                            ),
-                          ],
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Movie data not available',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => Get.back(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                             Text(
-                              ' Eternals ',
-                              style: GoogleFonts.italiana(
-                                textStyle: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  '2025-05-22 ',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 14,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(width: 10,),
-                                Text(
-                                  'Popularity : 60',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 14,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
+                        child: const Text('Go Back', style: TextStyle(color: Colors.black)),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            final movie = logic.movieData!;
+
+            return Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0B5A3D),
+                    Color(0xFF1B0320),
+                  ],
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: Get.height * 0.46,
+                          width: Get.width,
+                          child: movie.posterPath != null && movie.posterPath!.isNotEmpty
+                              ? Image.network(
+                            movie.posterPath!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset(movie as String, fit: BoxFit.cover),
+                          )
+                              : Image.asset(movie as String, fit: BoxFit.cover),
+                        ),
+                        _buildHeaderIcons(logic),
+                      ],
+                    ),
+
+                    Transform.translate(
+                      offset: const Offset(0, -60),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          width: Get.width,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.topRight,
+                              colors: [
+                                Color(0xFF0B5A3D),
+                                Color(0xFF3A0442),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                5,
-                                    (index) => Icon(
-                                  index < 4 ? Icons.star : Icons.star_border,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.10),
+                                blurRadius: 15,
+                                offset: const Offset(2, 5),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                movie.originalTitle ?? 'No Title',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    movie.releaseDate ?? 'Unknown date',
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Popularity: ${movie.popularity?.toStringAsFixed(1) ?? 'N/A'}',
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: _buildStarRating(movie.voteAverage ?? 0),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // The description and cast sections now follow directly after the info container
-                  // with a negative top margin to close the gap created by the transform
-                  Transform.translate(
-                    offset: const Offset(0, -50), // Adjust this to close the gap
-                    child: Column(
-                      children: [
-                        _buildDescriptionSection(),
-                        _buildCastSection(),
-                      ],
+                    // Description and cast sections
+                    Transform.translate(
+                      offset: const Offset(0, -50),
+                      child: Column(
+                        children: [
+                          _buildDescriptionSection(movie),
+                          _buildCastSection(movie),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
       ),
     );
   }
 
-  Widget _buildHeaderIcons() {
+  List<Widget> _buildStarRating(double rating) {
+    final fullStars = rating ~/ 2;
+    final hasHalfStar = (rating % 2) >= 0.5;
+    final emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return [
+      for (int i = 0; i < fullStars; i++)
+        const Icon(Icons.star, color: Colors.amber, size: 20),
+      if (hasHalfStar)
+        const Icon(Icons.star_half, color: Colors.amber, size: 20),
+      for (int i = 0; i < emptyStars; i++)
+        const Icon(Icons.star_border, color: Colors.white, size: 20),
+    ];
+  }
+
+  Widget _buildHeaderIcons(DetailsController logic) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(left: 25.0, top: 15, right: 25),
@@ -174,24 +220,17 @@ class DetailsView extends StatelessWidget {
                 ],
               ),
               child: Center(
-                child: Container(
-                  height: 48,
-                  width: 48,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    ),
+                child: GestureDetector(
+                  onTap: () => Get.back(),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.arrow_back_ios, color: Colors.white),
                   ),
                 ),
               ),
             ),
             // Wishlist button
-            Container(
+            Obx(() => Container(
               height: 50,
               width: 50,
               decoration: BoxDecoration(
@@ -213,45 +252,43 @@ class DetailsView extends StatelessWidget {
                 ],
               ),
               child: Center(
-                child: Container(
-                  height: 48,
-                  width: 48,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
+                child: GestureDetector(
+                  onTap: () => logic.toggleWishlist(),
+                  child: Icon(
+                    logic.isWishlisted.value
+                        ? Icons.favorite
+                        : Icons.favorite_border_outlined,
+                    color: logic.isWishlisted.value
+                        ? Colors.red
+                        : Colors.white,
                   ),
-                  child: GestureDetector(
-                    onTap: () {
-
-                      },
-                      child: const Icon(Icons.favorite_border_outlined, color: Colors.white)),
                 ),
+
               ),
-            ),
+            )),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDescriptionSection() {
+  Widget _buildDescriptionSection(Data movie) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Overview',
-            style: GoogleFonts.italiana(
-              textStyle: const TextStyle(
+            style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+                fontWeight: FontWeight.bold
             ),
-          ).cPadOnly(t:16),
-          const Text(
-            'The saga of the Eternals, a race of immortal beings who lived on Earth and shaped its history and civilizations. The saga of the Eternals, a race of immortal beings who lived on Earth and shaped its history and civilizations.',
-            style: TextStyle(
+          ).cPadOnly(t: 16),
+          Text(
+            movie.overview ?? 'No overview available.',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
             ),
@@ -262,32 +299,42 @@ class DetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildCastSection() {
+  Widget _buildCastSection(Data movie) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        const Text(
           'Casts',
-          style: GoogleFonts.italiana(
-            textStyle: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,fontWeight: FontWeight.bold
-            ),),
-        ).cPadOnly(l: 16,t:16,b: 5),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 20,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 10.0,
-            mainAxisSpacing: 16.0,
-            childAspectRatio: 3,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-          itemBuilder: (context, index) {
-            return _buildCastCard('Angelina Jolie', splash);
-          },
-        ).cPadOnly(l: 16,r: 16),
+        ).cPadOnly(l: 16, t: 16, b: 5),
+        if (movie.casts != null && movie.casts!.isNotEmpty)
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: movie.casts!.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 16.0,
+              childAspectRatio: 3,
+            ),
+            itemBuilder: (context, index) {
+              final cast = movie.casts![index];
+              return _buildCastCard(cast.name ?? 'Unknown', cast.profilePath ?? user);
+            },
+          ).cPadOnly(l: 16, r: 16)
+        else
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'No cast information available',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
       ],
     );
   }
@@ -301,18 +348,23 @@ class DetailsView extends StatelessWidget {
       child: Row(
         children: [
           ClipOval(
-            child: Image.asset(
+            child: imagePath.isNotEmpty && imagePath != user
+                ? Image.network(
               imagePath,
               width: 60,
               height: 60,
               fit: BoxFit.cover,
-            ),
+              errorBuilder: (context, error, stackTrace) =>
+                  Image.asset(user, width: 60, height: 60, fit: BoxFit.cover),
+            )
+                : Image.asset(user, width: 60, height: 60, fit: BoxFit.cover),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               name,
               style: const TextStyle(color: Colors.white),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

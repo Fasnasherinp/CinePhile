@@ -129,7 +129,7 @@ class MovieWishlistCard extends StatelessWidget {
                   style: GoogleFonts.italiana(
                     textStyle: const TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 20,fontWeight: FontWeight.bold
                     ),
                   ),
                 ),

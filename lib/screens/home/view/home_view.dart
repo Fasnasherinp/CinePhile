@@ -1,6 +1,5 @@
 // home_view.dart
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cinephile/res/images.dart';
 import 'package:cinephile/screens/home/bind/home_bind.dart';
 import 'package:cinephile/utilities/app_route.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +92,6 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  // In your _buildScrollableContent method, replace with:
   Widget _buildScrollableContent() {
     final HomeController logic = Get.find();
 
@@ -178,30 +176,29 @@ class HomeView extends StatelessWidget {
               );
             }
 
-            return InkWell(
-              onTap: (){
-                Get.toNamed(Routes.details);
-                },
-
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: logic.allMovies.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.7,
-                ),
-                itemBuilder: (context, index) {
-                  final movieData = logic.allMovies[index];
-                  return MovieGridItem(
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: logic.allMovies.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+                childAspectRatio: 0.7,
+              ),
+              itemBuilder: (context, index) {
+                final movieData = logic.allMovies[index];
+                return InkWell(
+                  onTap: (){
+                    Get.toNamed(Routes.details, arguments: movieData);
+                  },
+                  child: MovieGridItem(
                     imagePath: movieData.posterPath ?? '',
                     movieTitle: movieData.originalTitle ?? '',
                     index: index,
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             );
           }),
         ],
@@ -213,7 +210,6 @@ class HomeView extends StatelessWidget {
     final HomeController logic = Get.find();
 
     return Obx(() {
-      // Show loading if movies are empty and still loading
       if (logic.allMovies.isEmpty && logic.isLoading.value) {
         return Container(
           height: 200,

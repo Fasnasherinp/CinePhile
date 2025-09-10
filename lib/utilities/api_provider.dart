@@ -22,7 +22,6 @@ class Api extends GetConnect {
       'per_page': perPage.toString(),
     };
 
-    // Add cursor to query if provided
     if (cursor != null && cursor.isNotEmpty) {
       queryParams['cursor'] = cursor;
     }
