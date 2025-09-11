@@ -12,134 +12,136 @@ class DetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<DetailsController>(
-          builder: (logic) {
-            // Check if we have movie data
-            final movie = logic.movieData;
+      body: GetBuilder<DetailsController>(builder: (logic) {
+        // Check if we have movie data
+        final movie = logic.movieData;
 
-            return Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF0B5A3D),
-                    Color(0xFF1B0320),
+        return Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF0B5A3D),
+                Color(0xFF1B0320),
+              ],
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.46,
+                      width: Get.width,
+                      child: movie.posterPath != null &&
+                              movie.posterPath!.isNotEmpty
+                          ? Image.network(
+                              movie.posterPath!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Image.asset(
+                                      _buildPlaceholderImage() as String,
+                                      fit: BoxFit.cover),
+                            )
+                          : Image.asset(_buildPlaceholderImage() as String,
+                              fit: BoxFit.cover),
+                    ),
+                    _buildHeaderIcons(logic),
                   ],
                 ),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        SizedBox(
-                          height: Get.height * 0.46,
-                          width: Get.width,
-                          child: movie.posterPath != null && movie.posterPath!.isNotEmpty
-                              ? Image.network(
-                            movie.posterPath!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(_buildPlaceholderImage() as String, fit: BoxFit.cover),
-                          )
-                              : Image.asset(_buildPlaceholderImage() as String, fit: BoxFit.cover),
-                        ),
-                        _buildHeaderIcons(logic),
-                      ],
-                    ),
 
-                    Transform.translate(
-                      offset: const Offset(0, -60),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          width: Get.width,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.topRight,
-                              colors: [
-                                Color(0xFF0B5A3D),
-                                Color(0xFF3A0442),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.10),
-                                blurRadius: 15,
-                                offset: const Offset(2, 5),
-                              ),
-                            ],
+                Transform.translate(
+                  offset: const Offset(0, -60),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      width: Get.width,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            Color(0xFF0B5A3D),
+                            Color(0xFF3A0442),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            blurRadius: 15,
+                            offset: const Offset(2, 5),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            movie.originalTitle ?? 'No Title',
+                            style: GoogleFonts.italiana(
+                              textStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                movie.originalTitle ?? 'No Title',
-                                style: GoogleFonts.italiana(
-                                  textStyle: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,fontWeight: FontWeight.bold
-                                  ),
+                                movie.releaseDate ?? 'Unknown date',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
                                 ),
                                 textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 6),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    movie.releaseDate ?? 'Unknown date',
-                                    style: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Popularity: ${movie.popularity?.toStringAsFixed(1) ?? 'N/A'}',
-                                    style: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: _buildStarRating(movie.voteAverage ?? 0),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Popularity: ${movie.popularity?.toStringAsFixed(1) ?? 'N/A'}',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                    ),
-
-                    // Description and cast sections
-                    Transform.translate(
-                      offset: const Offset(0, -50),
-                      child: Column(
-                        children: [
-                          _buildDescriptionSection(movie),
-                          _buildCastSection(movie),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: _buildStarRating(movie.voteAverage ?? 0),
+                          ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          }
-      ),
+
+                // Description and cast sections
+                Transform.translate(
+                  offset: const Offset(0, -50),
+                  child: Column(
+                    children: [
+                      _buildDescriptionSection(movie),
+                      _buildCastSection(movie),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -199,41 +201,40 @@ class DetailsView extends StatelessWidget {
             ),
             // Wishlist button
             Obx(() => Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF2E0249),
-                    Color(0xFF0B5A3D),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF2E0249),
+                        Color(0xFF0B5A3D),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Center(
-                child: GestureDetector(
-                  onTap: () => logic.toggleWishlist(),
-                  child: Icon(
-                    logic.isWishlisted.value
-                        ? Icons.favorite
-                        : Icons.favorite_border_outlined,
-                    color: logic.isWishlisted.value
-                        ? Colors.red
-                        : Colors.white,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () => logic.toggleWishlist(),
+                      child: Icon(
+                        logic.isWishlisted.value
+                            ? Icons.favorite
+                            : Icons.favorite_border_outlined,
+                        color: logic.isWishlisted.value
+                            ? Colors.red
+                            : Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-
-              ),
-            )),
+                )),
           ],
         ),
       ),
@@ -246,13 +247,13 @@ class DetailsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
+          Text(
             'Overview',
             style: GoogleFonts.italiana(
               textStyle: const TextStyle(
                   color: Colors.white,
-                  fontSize: 18,fontWeight: FontWeight.bold
-              ),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ).cPadOnly(t: 16),
           Text(
@@ -272,13 +273,12 @@ class DetailsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Casts',
           style: GoogleFonts.italiana(
             textStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,fontWeight: FontWeight.bold
-            ),),
+                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ).cPadOnly(l: 16, t: 16, b: 5),
         if (movie.casts != null && movie.casts!.isNotEmpty)
           GridView.builder(
@@ -293,7 +293,8 @@ class DetailsView extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               final cast = movie.casts![index];
-              return _buildCastCard(cast.name ?? 'Unknown', cast.profilePath ?? user);
+              return _buildCastCard(
+                  cast.name ?? 'Unknown', cast.profilePath ?? user);
             },
           ).cPadOnly(l: 16, r: 16)
         else
@@ -319,13 +320,16 @@ class DetailsView extends StatelessWidget {
           ClipOval(
             child: imagePath.isNotEmpty && imagePath != user
                 ? Image.network(
-              imagePath,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  Image.asset(user, width: 60, height: 60, fit: BoxFit.cover),
-            )
+                    imagePath,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                        user,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover),
+                  )
                 : Image.asset(user, width: 60, height: 60, fit: BoxFit.cover),
           ),
           const SizedBox(width: 8),
@@ -349,5 +353,4 @@ class DetailsView extends StatelessWidget {
       ),
     );
   }
-
 }

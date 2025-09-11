@@ -108,6 +108,8 @@ class HomeController extends GetxController {
     if (movieIndex != -1 && movieIndex < isWishlisted.length) {
       isWishlisted[movieIndex] = false;
     }
+    update();
+
   }
 
   void toggleWishlist(Data movie) {

@@ -47,15 +47,17 @@ class WishlistView extends StatelessWidget {
                               child: MovieWishlistCard(
                                 movie: movie,
                                 onRemove: () {
-                                  homeController.wishlistedMovies.remove(movie);
-                                  // Also update the wishlist status in home screen
-                                  final movieIndex = homeController.allMovies
-                                      .indexWhere(
-                                          (m) => m.movieId == movie.movieId);
-                                  if (movieIndex != -1) {
-                                    homeController.isWishlisted[movieIndex] =
-                                        false;
-                                  }
+                                  // homeController.wishlistedMovies.remove(movie);
+                                  // // Also update the wishlist status in home screen
+                                  // final movieIndex = homeController.allMovies
+                                  //     .indexWhere(
+                                  //         (m) => m.movieId == movie.movieId);
+                                  // if (movieIndex != -1) {
+                                  //   homeController.isWishlisted[movieIndex] =
+                                  //       false;
+                                  // }
+                                  homeController.removeFromWishlist(movie);
+
                                 },
                               ),
                             );
@@ -82,42 +84,128 @@ class WishlistView extends StatelessWidget {
               color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        onPressed: () => Get.back(),
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF2E0249),
+                Color(0xFF0B5A3D),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Center(
+            child: GestureDetector(
+              onTap: () => Get.back(),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Icon(Icons.arrow_back_ios, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
       ),
+
     );
   }
 
   Widget _buildEmptyWishlist() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.favorite_border, size: 64, color: Colors.white54),
-          const SizedBox(height: 16),
-          Text(
-            'Your wishlist is empty',
-            style: GoogleFonts.italiana(
-              textStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.topRight,
+          colors: [
+            Color(0xFF3A0442),
+            Color(0xFF0B5A3D),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Animated icon with shadow
+              const Icon(
+                Icons.auto_awesome,
+                size: 80,
+                color: Color(0x510E98FF),
               ),
-            ),
+              const SizedBox(height: 30),
+              // Title with custom styling
+              Text(
+                'No Favorites Yet',
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Description text
+              Text(
+                'Movies you love will appear here',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  textStyle: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+              // Decorative elements
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.star_border, color: Colors.amber.shade300, size: 16),
+                  const SizedBox(width: 8),
+                  Icon(Icons.star_border, color: Colors.amber.shade300, size: 20),
+                  const SizedBox(width: 8),
+                  Icon(Icons.star_border, color: Colors.amber.shade300, size: 16),
+                ],
+              ),
+              const SizedBox(height: 30),
+              // Hint text with icon
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Icon(Icons.touch_app, size: 18, color: Colors.pink.shade200),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Tap the 🤍 to add movies',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Add movies to your wishlist by tapping the 🤍 icon',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white54,
-            ),
-          ),
-        ],
+        ),
       ),
     );
-  }
-}
+  }}
 
 class MovieWishlistCard extends StatelessWidget {
   final Data movie;
@@ -163,7 +251,7 @@ class MovieWishlistCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  movie.originalTitle ?? 'No Title',
+                  movie.originalTitle ?? ' Title',
                   style: GoogleFonts.italiana(
                     textStyle: const TextStyle(
                         color: Colors.white,
@@ -177,7 +265,7 @@ class MovieWishlistCard extends StatelessWidget {
                     const Icon(Icons.star, color: Colors.yellow, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      movie.voteAverage?.toStringAsFixed(1) ?? 'N/A',
+                      movie.voteAverage?.toStringAsFixed(1) ?? '',
                       style: const TextStyle(
                         color: Colors.white,
                       ),
