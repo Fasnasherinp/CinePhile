@@ -1,6 +1,7 @@
 // home_bind.dart
 import 'package:cinephile/model/movies_model.dart';
 import 'package:cinephile/utilities/api_provider.dart';
+import 'package:cinephile/utilities/storage_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -23,6 +24,7 @@ class HomeController extends GetxController {
   var scrollController = ScrollController().obs;
   var wishlistedMovies = <Data>[].obs;
 
+
   // Cursor-based pagination variables
   var nextCursor = Rx<String?>(null);
   var currentCursor = Rx<String?>(null);
@@ -30,6 +32,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    loadWishlistFromStorage();
     getMovieList();
     setupScrollController();
   }
@@ -45,13 +48,50 @@ class HomeController extends GetxController {
     });
   }
 
+  void loadWishlistFromStorage() {
+    try {
+      final storedWishlist = StorageService.getWishlist();
+      if (storedWishlist.isNotEmpty) {
+        wishlistedMovies.value = storedWishlist
+            .map((item) => Data.fromJson(item))
+            .whereType<Data>()
+            .toList();
+
+        if (kDebugMode) {
+          print('Loaded ${wishlistedMovies.length} movies from storage');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading wishlist from storage: $e');
+      }
+    }
+  }
+
+  // Save wishlist to storage
+  void saveWishlistToStorage() {
+    try {
+      final wishlistJson = wishlistedMovies.map((movie) => movie.toJson()).toList();
+      StorageService.saveWishlist(wishlistJson);
+
+      if (kDebugMode) {
+        print('Saved ${wishlistedMovies.length} movies to storage');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving wishlist to storage: $e');
+      }
+    }
+  }
 
   bool isMovieWishlisted(Data movie) {
     return wishlistedMovies.any((m) => m.movieId == movie.movieId);
   }
+
   void addToWishlist(Data movie) {
     if (!wishlistedMovies.any((m) => m.movieId == movie.movieId)) {
       wishlistedMovies.add(movie);
+      saveWishlistToStorage(); // Save to storage after adding
 
       final movieIndex = allMovies.indexWhere((m) => m.movieId == movie.movieId);
       if (movieIndex != -1 && movieIndex < isWishlisted.length) {
@@ -62,8 +102,8 @@ class HomeController extends GetxController {
 
   void removeFromWishlist(Data movie) {
     wishlistedMovies.removeWhere((m) => m.movieId == movie.movieId);
+    saveWishlistToStorage();
 
-    // Update the wishlist status in the home screen if the movie exists there
     final movieIndex = allMovies.indexWhere((m) => m.movieId == movie.movieId);
     if (movieIndex != -1 && movieIndex < isWishlisted.length) {
       isWishlisted[movieIndex] = false;

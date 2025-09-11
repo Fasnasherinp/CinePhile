@@ -1,14 +1,16 @@
 import 'package:cinephile/utilities/app_pages.dart';
 import 'package:cinephile/utilities/app_route.dart';
 import 'package:cinephile/utilities/com_binding.dart';
+import 'package:cinephile/utilities/storage_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageService.init();
+  runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
