@@ -1,4 +1,4 @@
-package com.example.cinephile
+package com.cinephile.app
 
 import io.flutter.embedding.android.FlutterActivity
 
