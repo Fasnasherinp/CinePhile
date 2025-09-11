@@ -1,76 +1,85 @@
-import 'package:cinephile/res/images.dart';
-import 'package:cinephile/screens/wishlist/bind/wishlist_bind.dart';
+import 'package:cinephile/model/movies_model.dart';
+import 'package:cinephile/screens/home/bind/home_bind.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_utils/flutter_custom_utils.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 
 class WishlistView extends StatelessWidget {
   const WishlistView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
+
     return Scaffold(
-      body: GetBuilder<WishListController>(
-          builder: (logic) {
-            return Container(
-              width: context.cWidth,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.topRight,
-                  colors: [
-                    Color(0xFF3A0442),
-                    Color(0xFF0B5A3D),
-                  ],
-                ),
-              ),
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
+      body: Obx(() {
+        final wishlistedMovies = homeController.wishlistedMovies;
+
+        return Container(
+          width: context.cWidth,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.topRight,
+              colors: [
+                Color(0xFF3A0442),
+                Color(0xFF0B5A3D),
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
                 const SizedBox(height: 20),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: 5, // Set the item count to 5
-                        itemBuilder: (context, index) {
-                          // You can use a list of data here, but for this example, we'll use static data.
-                          return const Padding(
-                            padding: EdgeInsets.only(bottom: 16.0), // Add padding between items
-                            child: MovieWishlistCard(
-                              title: 'Spiderman',
-                              voteAverage: '9.5',
-                              voteCount: '323',
-                              releaseDate: '2019',
-                              language: 'En',
-                              imagePath: movie, // Placeholder
-                            ),
-                          );
-                        },
-                      ),
-                    )                  ],
+                Expanded(
+                  child: wishlistedMovies.isEmpty
+                      ? _buildEmptyWishlist()
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: wishlistedMovies.length,
+                          itemBuilder: (context, index) {
+                            final movie = wishlistedMovies[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: MovieWishlistCard(
+                                movie: movie,
+                                onRemove: () {
+                                  homeController.wishlistedMovies.remove(movie);
+                                  // Also update the wishlist status in home screen
+                                  final movieIndex = homeController.allMovies
+                                      .indexWhere(
+                                          (m) => m.movieId == movie.movieId);
+                                  if (movieIndex != -1) {
+                                    homeController.isWishlisted[movieIndex] =
+                                        false;
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        ),
                 ),
-              ),
-            );
-          }
-      ),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
+
   Widget _buildHeader() {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      title:  Text(
+      title: Text(
         'Wishlist',
         style: GoogleFonts.italiana(
           textStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,fontWeight: FontWeight.bold
-          ),
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       leading: IconButton(
@@ -79,24 +88,45 @@ class WishlistView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildEmptyWishlist() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.favorite_border, size: 64, color: Colors.white54),
+          const SizedBox(height: 16),
+          Text(
+            'Your wishlist is empty',
+            style: GoogleFonts.italiana(
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Add movies to your wishlist by tapping the 🤍 icon',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class MovieWishlistCard extends StatelessWidget {
-  final String title;
-  final String voteAverage;
-  final String voteCount;
-  final String releaseDate;
-  final String language;
-  final String imagePath;
+  final Data movie;
+  final VoidCallback onRemove;
 
   const MovieWishlistCard({
     super.key,
-    required this.title,
-    required this.voteAverage,
-    required this.voteCount,
-    required this.releaseDate,
-    required this.language,
-    required this.imagePath,
+    required this.movie,
+    required this.onRemove,
   });
 
   @override
@@ -112,12 +142,20 @@ class MovieWishlistCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              imagePath,
-              width: 100,
-              height: 150,
-              fit: BoxFit.cover,
-            ),
+            child: movie.posterPath != null && movie.posterPath!.isNotEmpty
+                ? Image.network(
+                    movie.posterPath!,
+                    width: 100,
+                    height: 150,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                        _buildPlaceholderImage() as String,
+                        width: 100,
+                        height: 150,
+                        fit: BoxFit.cover),
+                  )
+                : Image.asset(_buildPlaceholderImage() as String,
+                    width: 100, height: 150, fit: BoxFit.cover),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -125,12 +163,12 @@ class MovieWishlistCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  movie.originalTitle ?? 'No Title',
                   style: GoogleFonts.italiana(
                     textStyle: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,fontWeight: FontWeight.bold
-                    ),
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -139,16 +177,17 @@ class MovieWishlistCard extends StatelessWidget {
                     const Icon(Icons.star, color: Colors.yellow, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      voteAverage,
+                      movie.voteAverage?.toStringAsFixed(1) ?? 'N/A',
                       style: const TextStyle(
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 10),
-                    const Icon(Icons.how_to_vote, color: Colors.white, size: 16),
+                    const Icon(Icons.how_to_vote,
+                        color: Colors.white, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      voteCount,
+                      movie.voteCount?.toString() ?? '0',
                       style: const TextStyle(
                         color: Colors.white,
                       ),
@@ -158,10 +197,11 @@ class MovieWishlistCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today, color: Colors.white, size: 16),
+                    const Icon(Icons.calendar_today,
+                        color: Colors.white, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      releaseDate,
+                      movie.releaseDate ?? 'Unknown date',
                       style: const TextStyle(
                         color: Colors.white,
                       ),
@@ -171,10 +211,11 @@ class MovieWishlistCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Icon(Icons.language_outlined, color: Colors.white, size: 16),
+                    const Icon(Icons.language_outlined,
+                        color: Colors.white, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      language,
+                      movie.originalLanguage ?? 'Unknown',
                       style: const TextStyle(
                         color: Colors.white,
                       ),
@@ -184,7 +225,20 @@ class MovieWishlistCard extends StatelessWidget {
               ],
             ),
           ),
+          IconButton(
+            icon: const Icon(Icons.favorite, color: Colors.red),
+            onPressed: onRemove,
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      color: Colors.grey.shade800,
+      child: const Center(
+        child: Icon(Icons.movie, color: Colors.white54, size: 50),
       ),
     );
   }

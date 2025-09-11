@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_utils/flutter_custom_utils.dart';
 import 'package:get/get.dart';
 import 'package:cinephile/screens/details/bind/details_bind.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key});
@@ -14,41 +15,7 @@ class DetailsView extends StatelessWidget {
       body: GetBuilder<DetailsController>(
           builder: (logic) {
             // Check if we have movie data
-            if (logic.movieData == null) {
-              return Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF0B5A3D),
-                      Color(0xFF1B0320),
-                    ],
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Movie data not available',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => Get.back(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                        ),
-                        child: const Text('Go Back', style: TextStyle(color: Colors.black)),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            final movie = logic.movieData!;
+            final movie = logic.movieData;
 
             return Container(
               decoration: const BoxDecoration(
@@ -75,9 +42,9 @@ class DetailsView extends StatelessWidget {
                             movie.posterPath!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(movie as String, fit: BoxFit.cover),
+                                Image.asset(_buildPlaceholderImage() as String, fit: BoxFit.cover),
                           )
-                              : Image.asset(movie as String, fit: BoxFit.cover),
+                              : Image.asset(_buildPlaceholderImage() as String, fit: BoxFit.cover),
                         ),
                         _buildHeaderIcons(logic),
                       ],
@@ -113,10 +80,11 @@ class DetailsView extends StatelessWidget {
                             children: [
                               Text(
                                 movie.originalTitle ?? 'No Title',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                style: GoogleFonts.italiana(
+                                  textStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,fontWeight: FontWeight.bold
+                                  ),
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 2,
@@ -278,12 +246,13 @@ class DetailsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+           Text(
             'Overview',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold
+            style: GoogleFonts.italiana(
+              textStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,fontWeight: FontWeight.bold
+              ),
             ),
           ).cPadOnly(t: 16),
           Text(
@@ -303,13 +272,13 @@ class DetailsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Casts',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: GoogleFonts.italiana(
+            textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,fontWeight: FontWeight.bold
+            ),),
         ).cPadOnly(l: 16, t: 16, b: 5),
         if (movie.casts != null && movie.casts!.isNotEmpty)
           GridView.builder(
@@ -371,4 +340,14 @@ class DetailsView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      color: Colors.grey.shade800,
+      child: const Center(
+        child: Icon(Icons.movie, color: Colors.white54, size: 50),
+      ),
+    );
+  }
+
 }

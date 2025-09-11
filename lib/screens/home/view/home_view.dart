@@ -1,4 +1,3 @@
-// home_view.dart
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cinephile/screens/home/bind/home_bind.dart';
 import 'package:cinephile/utilities/app_route.dart';
@@ -143,68 +142,6 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-  Widget _buildPopularMoviesSection() {
-    final HomeController logic = Get.find();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Popular',
-            style: GoogleFonts.italiana(
-              textStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Obx(() {
-            if (logic.allMovies.isEmpty && logic.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (logic.allMovies.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No movies found',
-                  style: TextStyle(color: Colors.white54),
-                ),
-              );
-            }
-
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: logic.allMovies.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-                childAspectRatio: 0.7,
-              ),
-              itemBuilder: (context, index) {
-                final movieData = logic.allMovies[index];
-                return InkWell(
-                  onTap: (){
-                    Get.toNamed(Routes.details, arguments: movieData);
-                  },
-                  child: MovieGridItem(
-                    imagePath: movieData.posterPath ?? '',
-                    movieTitle: movieData.originalTitle ?? '',
-                    index: index,
-                  ),
-                );
-              },
-            );
-          }),
-        ],
-      ),
-    );
-  }
 
   Widget _buildBannerSection() {
     final HomeController logic = Get.find();
@@ -224,7 +161,6 @@ class HomeView extends StatelessWidget {
         );
       }
 
-      // Show placeholder if no movies
       if (logic.allMovies.isEmpty) {
         return Container(
           height: 200,
@@ -239,8 +175,7 @@ class HomeView extends StatelessWidget {
         );
       }
 
-      // Use the first few movies for banner (max 5)
-      final bannerMovies = logic.allMovies.take(5).toList();
+      final bannerMovies = logic.allMovies;
 
       return Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0),
@@ -322,7 +257,6 @@ class HomeView extends StatelessWidget {
       );
     });
   }
-// Helper method for placeholder image
   Widget _buildPlaceholderImage() {
     return Container(
       color: Colors.grey.shade800,
@@ -331,6 +265,70 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildPopularMoviesSection() {
+    final HomeController logic = Get.find();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Popular',
+            style: GoogleFonts.italiana(
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Obx(() {
+            if (logic.allMovies.isEmpty && logic.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (logic.allMovies.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No movies found',
+                  style: TextStyle(color: Colors.white54),
+                ),
+              );
+            }
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: logic.allMovies.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+                childAspectRatio: 0.7,
+              ),
+              itemBuilder: (context, index) {
+                final movieData = logic.allMovies[index];
+                return InkWell(
+                  onTap: (){
+                    Get.toNamed(Routes.details, arguments: movieData);
+                  },
+                  child: MovieGridItem(
+                    imagePath: movieData.posterPath ?? '',
+                    movieTitle: movieData.originalTitle ?? '',
+                    index: index,
+                  ),
+                );
+              },
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
 
 }
 
@@ -348,7 +346,6 @@ class MovieGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find();
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -359,7 +356,17 @@ class MovieGridItem extends StatelessWidget {
             imagePath,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) =>
-                Container(color: Colors.grey.shade300),
+                _buildPlaceholderImage(), // Use the placeholder here
+            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
           ),
           Positioned(
             bottom: 0,
@@ -395,7 +402,7 @@ class MovieGridItem extends StatelessWidget {
               }
               return GestureDetector(
                 onTap: () {
-                  homeController.toggleWishlist(index);
+                  homeController.toggleWishlist(homeController.allMovies[index]);
                 },
                 child: Icon(
                   homeController.isWishlisted[index]
@@ -411,4 +418,13 @@ class MovieGridItem extends StatelessWidget {
       ),
     );
   }
+  Widget _buildPlaceholderImage() {
+    return Container(
+      color: Colors.grey.shade800,
+      child: const Center(
+        child: Icon(Icons.movie, color: Colors.white54, size: 50),
+      ),
+    );
+  }
+
 }

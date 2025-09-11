@@ -21,6 +21,7 @@ class HomeController extends GetxController {
   var isLoading = false.obs;
   var hasMore = true.obs;
   var scrollController = ScrollController().obs;
+  var wishlistedMovies = <Data>[].obs;
 
   // Cursor-based pagination variables
   var nextCursor = Rx<String?>(null);
@@ -44,9 +45,36 @@ class HomeController extends GetxController {
     });
   }
 
-  void toggleWishlist(int index) {
-    if (index >= 0 && index < isWishlisted.length) {
-      isWishlisted[index] = !isWishlisted[index];
+
+  bool isMovieWishlisted(Data movie) {
+    return wishlistedMovies.any((m) => m.movieId == movie.movieId);
+  }
+  void addToWishlist(Data movie) {
+    if (!wishlistedMovies.any((m) => m.movieId == movie.movieId)) {
+      wishlistedMovies.add(movie);
+
+      final movieIndex = allMovies.indexWhere((m) => m.movieId == movie.movieId);
+      if (movieIndex != -1 && movieIndex < isWishlisted.length) {
+        isWishlisted[movieIndex] = true;
+      }
+    }
+  }
+
+  void removeFromWishlist(Data movie) {
+    wishlistedMovies.removeWhere((m) => m.movieId == movie.movieId);
+
+    // Update the wishlist status in the home screen if the movie exists there
+    final movieIndex = allMovies.indexWhere((m) => m.movieId == movie.movieId);
+    if (movieIndex != -1 && movieIndex < isWishlisted.length) {
+      isWishlisted[movieIndex] = false;
+    }
+  }
+
+  void toggleWishlist(Data movie) {
+    if (isMovieWishlisted(movie)) {
+      removeFromWishlist(movie);
+    } else {
+      addToWishlist(movie);
     }
   }
 
@@ -55,7 +83,6 @@ class HomeController extends GetxController {
       isLoading.value = true;
       EasyLoading.show();
 
-      // Reset cursors for initial load
       nextCursor.value = null;
       currentCursor.value = null;
 
@@ -63,9 +90,12 @@ class HomeController extends GetxController {
 
       if (movies.data != null && movies.data!.isNotEmpty) {
         allMovies.value = movies.data!;
-        isWishlisted.value = List.generate(movies.data!.length, (index) => false);
 
-        // Set next cursor for pagination
+        isWishlisted.value = List.generate(movies.data!.length, (index) {
+          final movie = movies.data![index];
+          return isMovieWishlisted(movie);
+        });
+
         nextCursor.value = movies.nextCursor;
         hasMore.value = nextCursor.value != null && nextCursor.value!.isNotEmpty;
       } else {
@@ -102,8 +132,7 @@ class HomeController extends GetxController {
       final newMovies = await Api.to.getMoviesList(cursor: nextCursor.value);
 
       if (newMovies.data != null && newMovies.data!.isNotEmpty) {
-        // Check if we're getting new movies or duplicates
-        final newMovieIds = newMovies.data!.map((e) => e.movieId).toSet();
+        // final newMovieIds = newMovies.data!.map((e) => e.movieId).toSet();
         final existingMovieIds = allMovies.map((e) => e.movieId).toSet();
 
         final actuallyNewMovies = newMovies.data!
@@ -112,9 +141,13 @@ class HomeController extends GetxController {
 
         if (actuallyNewMovies.isNotEmpty) {
           allMovies.addAll(actuallyNewMovies);
-          isWishlisted.addAll(List.generate(actuallyNewMovies.length, (index) => false));
 
-          // Update cursor for next pagination
+          final newWishlistStatus = actuallyNewMovies.map((movie) {
+            return isMovieWishlisted(movie);
+          }).toList();
+
+          isWishlisted.addAll(newWishlistStatus);
+
           nextCursor.value = newMovies.nextCursor;
           hasMore.value = nextCursor.value != null && nextCursor.value!.isNotEmpty;
 
@@ -123,7 +156,6 @@ class HomeController extends GetxController {
             print('Next cursor: ${nextCursor.value}');
           }
         } else {
-          // No new movies, probably reached the end
           hasMore.value = false;
           if (kDebugMode) {
             print('No new movies found. Stopping pagination.');

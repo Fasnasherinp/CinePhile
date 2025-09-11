@@ -1,8 +1,7 @@
 import 'package:cinephile/model/movies_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/connect.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 
 class Api extends GetConnect {
   static Api get to => Get.find();

@@ -1,6 +1,5 @@
 import 'package:cinephile/utilities/app_pages.dart';
 import 'package:cinephile/utilities/app_route.dart';
-import 'package:cinephile/utilities/com_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -20,7 +19,6 @@ class MyApp extends StatelessWidget {
       title: 'CinePhile',
       getPages: AppPages.pages,
       initialRoute: Routes.splash,
-      initialBinding: ComBinding(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
