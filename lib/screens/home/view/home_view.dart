@@ -58,14 +58,29 @@ class HomeView extends StatelessWidget {
                   ),
                 ),
               ),
+
               Expanded(
                 flex: 0,
-                child: IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.white, size: 30),
-                  onPressed: () {
-                    Get.toNamed(Routes.wishlist);
-                  },
-                ),
+                child: Obx(() {
+                  final wishlistCount = Get.find<HomeController>().wishlistedMovies.length;
+                  return Badge(
+                    label: Text(
+                      wishlistCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                    backgroundColor: Colors.red,
+                    smallSize: 15,
+                    padding: const EdgeInsets.all(4),
+                    alignment: Alignment.topRight,
+                    offset: const Offset(-4,0),
+                    child: IconButton(
+                      icon: const Icon(Icons.favorite_border, color: Colors.white, size: 30),
+                      onPressed: () {
+                        Get.toNamed(Routes.wishlist);
+                      },
+                    ),
+                  );
+                }),
               ),
             ],
           ),
